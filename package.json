@@ -1,6 +1,6 @@
 {
   "name": "@hyong8023/eztool",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "private": false,
   "description": "typescript easy tools",
   "scripts": {
@@ -10,6 +10,8 @@
     "lint:fix": "eslint --fix --ext .ts .",
     "pub": "npm publish --access public"
   },
+  "main": "./lib/index.ts",
+  "types": "./lib/index.ts",
   "repository": {
     "type": "git",
     "url": "git+git@github.com:git8023/eztool.git"

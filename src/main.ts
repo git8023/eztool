@@ -1,6 +1,4 @@
-import { arrays } from '../lib/tools/arrays'
-import { logger } from '../lib/tools/logs'
+import * as ezt from 'lib'
+import 'lib/style/dc-base.scss'
 
-arrays.foreach([1, 2, 3], (e, i) => {
-  logger.debug(i, e)
-})
+ezt.logs.debug('111')

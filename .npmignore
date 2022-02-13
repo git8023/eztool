@@ -8,6 +8,7 @@
 babel.config.js
 vue.config.js
 yarn.lock
+tsconfig.json
 
 .DS_Store
 node_modules

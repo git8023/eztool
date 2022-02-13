@@ -63,7 +63,7 @@ export class ConsoleLogger implements ifacer.ILogger {
       // this.enableTrace = true;
 
       // @ts-ignore
-      window.logger = this
+      window.logs = this
 
       // @ts-ignore
       this.dir = {
@@ -97,7 +97,7 @@ export class ConsoleLogger implements ifacer.ILogger {
     const color = 'color:' + ConsoleFontColor[lvName]
 
     let spCount = 0
-    arrays.foreach(args, (e, i) => {
+    arrays.foreach(args, e => {
       const isStrParam = validators.is(e, 'String')
       if (isStrParam) {
         spCount++
@@ -151,4 +151,4 @@ export class ConsoleLogger implements ifacer.ILogger {
   }
 }
 
-export const logger: ifacer.ILogger = ConsoleLogger.instance
+export const logs: ifacer.ILogger = ConsoleLogger.instance
