@@ -1,7 +1,7 @@
 {
   "name": "@hyong8023/eztool",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "description": "typescript easy tools",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -20,9 +20,9 @@
   "author": "hyong",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/git8023/tks/issues"
+    "url": "https://github.com/git8023/eztool/issues"
   },
-  "homepage": "https://github.com/git8023/tks#readme",
+  "homepage": "https://github.com/git8023/eztool#readme",
   "dependencies": {
     "core-js": "^3.6.5"
   },
