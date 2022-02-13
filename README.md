@@ -1,0 +1,2 @@
+# eztool
+Easy Typescript Tools
