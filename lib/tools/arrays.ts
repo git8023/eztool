@@ -1,10 +1,11 @@
 // 数组工具
-import { ArrayOrNull, IdableConvertor, StringKeysJson, StringOrIdableConvertor, TypeOrNull } from '../type/types'
-import { funcs } from '../type/InterfaceDeclarer'
-import { validators } from './validators'
-import { utils } from './utils'
-import { strings } from './strings'
+import {ArrayOrNull, IdableConvertor, StringKeysJson, StringOrIdableConvertor, TypeOrNull} from '../type/types'
+import {funcs} from '../type/InterfaceDeclarer'
+import {validators} from './validators'
+import {utils} from './utils'
+import {strings} from './strings'
 import IDataProcessor = funcs.IDataProcessor
+import {logs} from "./logs";
 
 export namespace $def {
 
@@ -13,7 +14,7 @@ export namespace $def {
    * @param fn {StringOrIdableConvertor} 字符串或处理函数
    * @return IdableConvertor<T>
    */
-  export function toIdableConvertor<T> (fn: StringOrIdableConvertor<T>): IdableConvertor<T> {
+  export function toIdableConvertor<T>(fn: StringOrIdableConvertor<T>): IdableConvertor<T> {
     if (validators.is(fn, 'String')) {
       // @ts-ignore
       return (e: T) => e[fn as string]
@@ -31,7 +32,8 @@ export namespace arrays {
    * @param [recover=true] 是否允许覆盖重复值
    * @param [recursion=()=>null] 子属性递归函数, 默认不递归
    */
-  export function toMap<T> (arr: Array<T>,
+  export function toMap<T>(
+    arr: Array<T>,
     toKey: StringOrIdableConvertor<T> = 'id',
     recover = true,
     recursion: (el: T) => Array<T> | any = () => null): StringKeysJson<T> {
@@ -42,8 +44,8 @@ export namespace arrays {
     }
 
     const fn = $def.toIdableConvertor(toKey)
-    arr.forEach(el => {
-      const key = fn(el)
+    arr.forEach((el, i) => {
+      const key = fn(el, i);
       if (result[key]) {
         if (!recover) {
           throw new Error(`不允许重复Key [${key}]`)
@@ -56,7 +58,6 @@ export namespace arrays {
         const childrenMap = toMap<T>(children, toKey, recover, recursion)
         utils.mergeJson<StringKeysJson<T>>(childrenMap, result, recover)
       }
-
     })
 
     return result
@@ -66,7 +67,8 @@ export namespace arrays {
    * 获取所有数组交集元素
    * @param args
    */
-  export function intersection<T> (...args: Array<T[]>): T[] {
+  export function intersection<T>(
+    ...args: Array<T[]>): T[] {
     if (validators.isNullOrUndefined(args)) {
       return []
     }
@@ -101,8 +103,9 @@ export namespace arrays {
    * @param recursion {Function} 递归属性提取检视器. 没有递归属性返回null否则返回需要递归的数组属性值
    * @returns {TypeOrNull} 查询成功返回目标数据, 否则返回null
    */
-  export function seek<T> (arr: Array<T>,
-    observer = (el: T, index?: number) => true,
+  export function seek<T>(
+    arr: Array<T>,
+    observer = (el: T, index?: number) => true as boolean,
     recursion = (el: T, index?: number) => null as ArrayOrNull<T>): TypeOrNull<{ el: T, index: number }> {
 
     let result: TypeOrNull<{ el: T, index: number }> = null
@@ -138,15 +141,15 @@ export namespace arrays {
    * @param func 回调函数, 返回false停止遍历
    * @return {Array<T>} 原始数组
    */
-  export function foreach<T> (arr: Array<T>,
-    func: (e: T, i: number) => (false | any)) {
+  export function foreach<T>(
+    arr: Array<T>,
+    func: (e: T, i: number) => (false | any)): T[] {
     if (!validators.is(arr, 'Array')) {
       return arr
     }
 
     for (let i = 0, len = arr.length; i < len; i++) {
-      const f1 = func(arr[i], i)
-      if (false === f1) {
+      if (false === func(arr[i], i)) {
         break
       }
     }
@@ -156,44 +159,46 @@ export namespace arrays {
 
   /**
    * 追加唯一目标值, 如果校验存在则跳过
-   * @param {Array<T>} a 数组
-   * @param {T} e 新元素
-   * @param {string | ((el: T, i: number) => boolean)} c 唯一值属性名或比较器函数(返回true表示存在)
+   * @param {Array<T>} arr 数组
+   * @param {T} el 新元素
+   * @param {string | ((el: T, i: number) => boolean)} predictor 唯一值属性名或比较器函数(返回true表示存在)
    * @return {number} 与e匹配的元素索引
    */
-  export function pushUnique<T> (a: Array<T>,
-    e: T,
-    c?: string | ((el: T, i: number) => boolean)): number {
-    const foundIndex = indexA(a, e, c)
+  export function pushUnique<T>(
+    arr: Array<T>,
+    el: T,
+    predictor?: string | ((el: T, i: number) => boolean)): number {
+    const foundIndex = indexA(arr, el, predictor)
     if (-1 !== foundIndex) {
       return foundIndex
     }
-    return a.push(e) - 1
+    return arr.push(el) - 1
   }
 
   /**
    * 查找索引
-   * @param {Array<T>} a 数组
-   * @param {T} e 查找条件
-   * @param {string | ((el: T, i: number) => boolean)} k 唯一值属性名或比较器函数(返回true表示找到)
+   * @param {Array<T>} arr 数组
+   * @param {T} el 查找条件
+   * @param {string | ((el: T, i: number) => boolean)} predictor 唯一值属性名或比较器函数(返回true表示找到)
    * @return {number} 索引, -1表示未找到
    */
-  export function indexA<T extends { [key: string]: any }> (
-    a: Array<T>,
-    e: T,
-    k?: string | ((el: T, i: number) => boolean)
-  ): number {
+  export function indexA<T>(
+    arr: Array<T>,
+    el: T,
+    predictor?: string | ((el: T, i: number) => boolean)): number {
     let fn: (el: T, i: number) => boolean
-    if (!(k instanceof Function)) {
-      if (validators.isNullOrUndefined(k)) {
-        fn = (el => el === e)
-      } else if (validators.is(k, 'String')) {
-        fn = (el => el[k + ''] === e[k + ''])
-      }
+    if (predictor instanceof Function) {
+      fn = predictor;
+    } else if (validators.is(predictor, 'String')) {
+      fn = ((e: any) => e[predictor + ''] === (<any>el)[predictor + ''])
+    } else if (!validators.isNullOrUndefined(predictor)) {
+      throw new Error('predictor无效. 仅支持String|Function');
+    } else {
+      fn = (e => e === el)
     }
 
     let foundIdx = -1
-    foreach<T>(a, (el: T, i: number) => {
+    foreach<T>(arr, (el: T, i: number) => {
       if (fn(el, i)) {
         foundIdx = i
         return false
@@ -204,39 +209,47 @@ export namespace arrays {
 
   /**
    * 查找目标值
-   * @param {Array<T>} a 数组
-   * @param {T} e 查找条件
-   * @param {string | ((el: T, i: number) => boolean)} k 唯一值属性名或比较器函数(返回true表示找到)
+   * @param {Array<T>} arr 数组
+   * @param {T} el 查找条件
+   * @param {string | ((el: T, i: number) => boolean)} predictor 唯一值属性名或比较器函数(返回true表示找到)
    * @return {T | null} 查找成功返回目标值, 否则返回null
    */
-  export function findA<T> (a: Array<T>, e: T, k?: string | ((el: T, i: number) => boolean)): T | null {
-    const i = indexA(a, e, k)
-    return -1 !== i ? a[i] : null
+  export function findA<T>(
+    arr: Array<T>,
+    el: T,
+    predictor?: string | ((el: T, i: number) => boolean)): T | null {
+    const i = indexA(arr, el, predictor)
+    return -1 !== i ? arr[i] : null
   }
 
   /**
    * 删除
-   * @param {Array<T>} a 数组
-   * @param {T} e 查找条件
-   * @param {string | ((el: T, i: number) => boolean)} k 唯一值属性名或比较器函数(返回true表示找到)
+   * @param {Array<T>} arr 数组
+   * @param {T} el 查找条件
+   * @param {string | ((el: T, i: number) => boolean)} predictor 唯一值属性名或比较器函数(返回true表示找到)
    * @return {T | null} 删除成功返回被删除目标值, 否则返回null
    */
-  export function remove<T> (a: Array<T>, e: T, k?: string | ((el: T, i: number) => boolean)): T | null {
-    const i = indexA(a, e, k)
+  export function remove<T>(
+    arr: Array<T>,
+    el: any,
+    predictor?: string | ((el: T, i: number) => boolean)): T | null {
+    const i = indexA(arr, el, predictor)
     if (-1 === i) {
       return null
     }
-    return a.splice(i, 1)[0]
+    return arr.splice(i, 1)[0]
   }
 
   /**
-   * 数组减法运算
-   * @param a {Array<T>} 被修改数据
-   * @param b {Array<T>} 目标数组
+   * 数组减法运算(arrA - arrB), 对象匹配通过引用判定
+   * @param arrA {Array<T>} 被修改数据
+   * @param arrB {Array<T>} 目标数组
    * @return {Array<T>} 被修改数据
    */
-  export function removeAll<T> (a: Array<T>, b: Array<T>): Array<T> {
-    return a.filter(av => !b.includes(av))
+  export function removeAll<T>(
+    arrA: Array<T>,
+    arrB: Array<T>): Array<T> {
+    return arrA.filter(av => !arrB.includes(av))
   }
 
   /**
@@ -245,7 +258,9 @@ export namespace arrays {
    * @param {Array<T>} src 元素组
    * @return {Array<T>} 目标数组
    */
-  export function concat<T> (dist: Array<T>, src: Array<T>): Array<T> {
+  export function concat<T>(
+    dist: Array<T>,
+    src: Array<T>): Array<T> {
     if (!validators.is(dist, 'Array') || !validators.is(src, 'Array')) {
       throw new Error('无效数组参数')
     }
@@ -260,7 +275,9 @@ export namespace arrays {
    * @param {string | ((el: T, i: number) => boolean)} k 唯一值属性名或比较器函数(返回true表示找到)
    * @return {boolean} true-已包含, false-未包含
    */
-  export function contains<T> (a: Array<T>, e: T, k?: string | ((el: T, i: number) => boolean)): boolean {
+  export function contains<T>(
+    a: Array<T>,
+    e: T, k?: string | ((el: T, i: number) => boolean)): boolean {
     return -1 !== indexA(a, e, k)
   }
 
@@ -269,7 +286,9 @@ export namespace arrays {
    * @param a {Array<any>} 目标数组
    * @param cb {(v: T, k: number) => boolean } 回调函数, false-删除, 其他-保留
    */
-  export function filter<T> (a: Array<T>, cb: (v: T, k?: number) => boolean | null) {
+  export function filter<T>(
+    a: Array<T>,
+    cb: (v: T, k?: number) => boolean | null) {
     let delKeys: number[] = []
     foreach(a, (v: T, k: number) => {
       if (false === cb(v, k)) {
@@ -286,12 +305,14 @@ export namespace arrays {
    * @param a 数组
    * @param k 关键字, 仅支持一级属性名
    */
-  export function group<T extends StringKeysJson<any>> (a: Array<T>, k: StringOrIdableConvertor<T>): { [s: string]: Array<T> } {
+  export function group<T extends StringKeysJson<any>>(
+    a: Array<T>,
+    k: StringOrIdableConvertor<T>): { [s: string]: Array<T> } {
     const ret: StringKeysJson<T[]> = {}
 
     const fn = $def.toIdableConvertor(k)
-    foreach(a, (e: T) => {
-      const rk = fn(e)
+    foreach(a, (e: T, k) => {
+      const rk = fn(e, k)
       const arr = ret[rk] || []
       arr.push(e)
       ret[rk] = arr
@@ -305,7 +326,9 @@ export namespace arrays {
    * @param k {string} 元素中的属性名
    * @return {Array<P>} 属性值数组
    */
-  export function mapProp<T extends StringKeysJson<any>, P> (a: Array<T>, k: string): Array<P> {
+  export function mapProp<T extends StringKeysJson<any>, P>(
+    a: Array<T>,
+    k: string): Array<P> {
     const pa: P[] = []
     foreach(a, (e: T) => {
       if (validators.notNullOrUndefined(e[k])) {
@@ -321,7 +344,9 @@ export namespace arrays {
    * @param [cover=true] 是否对arr产生副作用
    * @return arr数组
    */
-  export function unique<T> (arr: Array<T>, cover = true): Array<T> {
+  export function unique<T>(
+    arr: Array<T>,
+    cover = true): Array<T> {
     const tmp = utils.or(arr, [])
     if (undefined === tmp) {
       return []
@@ -344,7 +369,9 @@ export namespace arrays {
    * @param func {StringOrIdableConvertor<T>} 属性名或ID提取器函数
    * @return {Array<T>} 处理后无序数组
    */
-  export function uniqueBy<T> (arr: Array<T>, func: StringOrIdableConvertor<T>): Array<T> {
+  export function uniqueBy<T>(
+    arr: Array<T>,
+    func: StringOrIdableConvertor<T>): Array<T> {
     return Object.values(toMap(arr, func))
   }
 
@@ -354,7 +381,9 @@ export namespace arrays {
    * @param otherArr {Array<Array<T>>} 源数组
    * @return {Array<T>} 目标数组
    */
-  export function merge<T> (dist: Array<T>, ...otherArr: Array<Array<T>>): Array<T> {
+  export function merge<T>(
+    dist: Array<T>,
+    ...otherArr: Array<Array<T>>): Array<T> {
     if (!validators.isEmpty(otherArr)) {
       foreach(otherArr, arr => concat<T>(dist, arr))
     }
@@ -366,7 +395,9 @@ export namespace arrays {
    * @param arr 数组
    * @param proc 匹配器
    */
-  export function fetch<T> (arr: Array<T>, proc: IDataProcessor<T, boolean>): { element: T, index: number } {
+  export function fetch<T>(
+    arr: Array<T>,
+    proc: IDataProcessor<T, boolean>): { element: T, index: number } {
     const data = {
       element: arr[arr.length - 1],
       index: arr.length - 1
@@ -386,7 +417,8 @@ export namespace arrays {
    * @param obj 对象
    * @param mapper 值映射器, 返回的数据key
    */
-  export function groupByValue<T> (obj: StringKeysJson<T>,
+  export function groupByValue<T>(
+    obj: StringKeysJson<T>,
     mapper?: funcs.IDataProcessor<T, string>): StringKeysJson<string[]> {
     const ret: StringKeysJson<string[]> = {}
 
@@ -407,7 +439,9 @@ export namespace arrays {
    * @param end 结束值(包含)
    * @return 数组长度: end - start + 1
    */
-  export function genNums (start: number, end: number): number[] {
+  export function genNums(
+    start: number,
+    end: number): number[] {
     if (0 >= end - start) {
       return []
     }
@@ -424,7 +458,8 @@ export namespace arrays {
    * @param [parentKey = 'id'] 被子节点指向的父节点属性名.
    * @param [onlyRoot=false] 是否从根节点移除所有子节点.
    */
-  export function tree<T> (arr: T[],
+  export function tree<T>(
+    arr: T[],
     childKey = 'children',
     parentIndex = 'parent',
     parentKey = 'id',

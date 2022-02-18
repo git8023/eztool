@@ -28,5 +28,10 @@ module.exports = {
     'no-useless-escape': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     'no-use-before-define': 'off',
+    'object-curly-spacing': 'off',
+    'no-undef': 'off',
+    'space-before-function-paren': 'off',
+    'semi': 'off',
+    'prefer-const': 'off',
   }
 }

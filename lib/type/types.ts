@@ -11,7 +11,7 @@ export type PrimaryTypeString =
   | 'String'
   | 'Date'
   | 'Number';
-export type IdableConvertor<T> = (e: T) => string;
+export type IdableConvertor<T> = (e: T, k: any) => string;
 export type StringOrIdableConvertor<T> = string | IdableConvertor<T>;
 export type NumberGenerator<T> = (e: T) => number;
 export type SortHandler<T> = (a: any, b: any) => number;
