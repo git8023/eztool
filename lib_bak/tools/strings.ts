@@ -1,19 +1,19 @@
 // 字符串工具类
-import jsons from './jsons';
-import arrays from './arrays';
-import validators from './validators';
+import { utils } from './utils'
+import { arrays } from './arrays'
+import { validators } from './validators'
 
-export default class strings {
+export namespace strings {
 
   /**
    * 字符串替换
    * @param s {string} 字符串
    * @param cfg {[s:string]:string} 属性名:正则表达式分组字符串, 属性值:要替换的值
    */
-  static replaceAll(s = '', cfg: { [s: string]: string } = {}): string {
+  export function replaceAll (s = '', cfg: { [s: string]: string } = {}): string {
     let tmp = s
-    jsons.foreach(cfg, (v, k) => {
-      const regExp = new RegExp(`${k}`, 'g')
+    utils.foreach(cfg, (v, k) => {
+      const regExp = new RegExp(k, 'g')
       tmp = tmp.replace(regExp, v)
     })
     return tmp
@@ -25,10 +25,10 @@ export default class strings {
    * @param arr {string[]} 被检测字符串
    * @return {boolean} 包含至少一个空字符串返回true, 否则返回false
    */
-  static hasBlank(useTrim = true, ...arr: string[]): boolean {
+  export function hasBlank (useTrim = true, ...arr: string[]): boolean {
     let isFoundBlank = false
     arrays.foreach(arr, e => {
-      if (strings.isBlank(e, useTrim)) {
+      if (isBlank(e, useTrim)) {
         isFoundBlank = true
         return false
       }
@@ -42,7 +42,7 @@ export default class strings {
    * @param [useTrim=true] {boolean} 是否去除两端空格
    * @return {boolean} 空字符串返回true, 否则返回false
    */
-  static isBlank(s: string, useTrim = true): boolean {
+  export function isBlank (s: string, useTrim = true): boolean {
     if (!validators.is(s, 'String')) {
       return false
     }
@@ -61,7 +61,7 @@ export default class strings {
    * 生成唯一ID
    * @return {string} 唯一字符串
    */
-  static guid(): string {
+  export function guid (): string {
     const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
     return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
   }
@@ -70,7 +70,7 @@ export default class strings {
    * 对象转string
    * @param o 对象
    */
-  static toString(o: any): string {
+  export function toString (o: any): string {
     return `${o}`
   }
 
@@ -78,7 +78,7 @@ export default class strings {
    * 去掉两端空格, s为null/undefined时返回''
    * @param s 源字符串
    */
-  static trimToEmpty(s: string): string {
+  export function trimToEmpty (s: string): string {
     if (validators.isNullOrUndefined(s)) {
       return ''
     }
@@ -90,7 +90,7 @@ export default class strings {
    * @param html HTML内容
    * @return HTML转义后字符串
    */
-  static html2text(html: any): string {
+  export function html2text (html: any): string {
     let temp: any = document.createElement('div');
     (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html)
     const output = temp.innerHTML
@@ -103,7 +103,7 @@ export default class strings {
    * @param text 普通文本
    * @return HTML标签(转义后)还原
    */
-  static text2html(text: any): string {
+  export function text2html (text: any): string {
     let temp: any = document.createElement('div')
     temp.innerHTML = text
     const output = temp.innerText || temp.textContent

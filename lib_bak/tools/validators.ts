@@ -1,17 +1,17 @@
 // 校验工具
-import logics from './logics';
-import {PrimaryTypeString} from '../types/types';
+import { PrimaryTypeString } from '../type/types'
+import { utils } from './utils'
 
-export default class validators {
+export namespace validators {
 
   /**
    * 校验一系列值是否为不可用的值(null/undefined)
    * @param vs 值列表
    * @returns true-全部都是null/undefined, false-当找到至少一个不是null/undefined
    */
-  static nullOrUndefined(...vs: any[]): boolean {
+  export function nullOrUndefined (...vs: any[]): boolean {
     for (const vsKey in vs) {
-      if (!validators.isNullOrUndefined(vs[vsKey])) {
+      if (!isNullOrUndefined(vs[vsKey])) {
         return false
       }
     }
@@ -23,7 +23,7 @@ export default class validators {
    * @param v 目标值
    * @returns true-目标值是null/undefined, false-目标值不是null/undefined
    */
-  static isNullOrUndefined(v: any): boolean {
+  export function isNullOrUndefined (v: any): boolean {
     return null === v || undefined === v
   }
 
@@ -32,8 +32,8 @@ export default class validators {
    * @param v 目标值
    * @returns true-值已定义, false-值未定义
    */
-  static notNullOrUndefined(v: any): boolean {
-    return !validators.isNullOrUndefined(v)
+  export function notNullOrUndefined (v: any): boolean {
+    return !isNullOrUndefined(v)
   }
 
   /**
@@ -41,8 +41,8 @@ export default class validators {
    * @param v 目标值
    * @returns true-目标值为真值, false-目标值为假值
    */
-  static isTruthy(v: any): boolean {
-    return !validators.isFalsy(v)
+  export function isTruthy (v: any): boolean {
+    return !isFalsy(v)
   }
 
   /**
@@ -50,7 +50,7 @@ export default class validators {
    * @param v 目标值
    * @returns true-目标值为假值 false-目标值为真值,
    */
-  static isFalsy(v: any): boolean {
+  export function isFalsy (v: any): boolean {
     return !v
   }
 
@@ -59,7 +59,7 @@ export default class validators {
    * @param v 目标值
    * @param type 类型
    */
-  static is(v: any, type: PrimaryTypeString): boolean {
+  export function is (v: any, type: PrimaryTypeString): boolean {
     return (`[object ${type}]` === Object.prototype.toString.call(v))
   }
 
@@ -69,8 +69,8 @@ export default class validators {
    * @param type {PrimaryTypeString} 类型
    * @return 如果是指定类型返回true, 否则返回false
    */
-  static isNot(v: any, type: PrimaryTypeString): boolean {
-    return !validators.is(v, type)
+  export function isNot (v: any, type: PrimaryTypeString): boolean {
+    return !is(v, type)
   }
 
   /**
@@ -78,17 +78,17 @@ export default class validators {
    * @param o {T} 被校验对象
    * @return {boolean}
    */
-  static isEmpty<T>(o: T): boolean {
-    if (validators.isNullOrUndefined(o)) {
+  export function isEmpty<T> (o: T): boolean {
+    if (isNullOrUndefined(o)) {
       return true
     }
 
-    if (logics.or(validators.is(o, 'Array'), validators.is(o, 'String'))) {
+    if (utils.or(is(o, 'Array'), is(o, 'String'))) {
       // @ts-ignore
       return 0 === o.length
     }
 
-    if (validators.is(o, 'Object')) {
+    if (is(o, 'Object')) {
       // @ts-ignore
       return 0 === Object.keys(o).length
     }
@@ -102,8 +102,8 @@ export default class validators {
    * @return {boolean}
    * @see validators.isEmpty
    */
-  static notEmpty<T>(o: T): boolean {
-    return !validators.isEmpty(o)
+  export function notEmpty<T> (o: T): boolean {
+    return !isEmpty(o)
   }
 
   /**
@@ -123,27 +123,18 @@ export default class validators {
    * @param b 对象b
    * @return 校验通过返回true, 否则返回false
    */
-  static isEq(a: any, b: any): boolean {
+  export function isEq (a: any, b: any): boolean {
 
     // same reference or primary value
     if (a === b) {
       return true
     }
 
-    if (validators.isNullOrUndefined(a) && validators.isNullOrUndefined(b)) {
+    if (isNullOrUndefined(a) && isNullOrUndefined(b)) {
       return true
     }
 
     // other
     return JSON.stringify(a) === JSON.stringify(b)
-  }
-
-  /**
-   * 校验对象是否为可执行函数
-   * @param o 目标对象
-   * @return 是可执行函数返回true, 否则返回false
-   */
-  static isFunction(o: any): boolean {
-    return validators.is(o, 'Function')
   }
 }
