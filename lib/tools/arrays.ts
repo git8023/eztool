@@ -7,12 +7,14 @@ import jsons from './jsons';
 import strings from './strings';
 import logics from './logics';
 
+type X = { a: string, b: number }
+
 export default class arrays {
 
   /**
    * 对象数组通过指定属性名转换为JSON对象
    * @param arr 目标数组
-   * @param toKey 转换接口
+   * @param [toKey] 转换接口
    * @param [recover=true] 是否允许覆盖重复值
    * @param [recursion=()=>null] 子属性递归函数, 默认不递归
    */
@@ -20,14 +22,15 @@ export default class arrays {
     arr: Array<T>,
     toKey: StringOrIdableConvertor<T> = 'id',
     recover = true,
-    recursion: (el: T) => Array<T> | any = () => null): JsonT<T> {
+    recursion: (el: T) => Array<T> | any = () => null
+  ): JsonT<T> {
 
     const result: JsonT<T> = converters.cast();
     if (validators.nullOrUndefined(arr, toKey)) {
       return result
     }
 
-    const fn = utils.toIdableConvertor(toKey)
+    const fn = utils.toIdableConvertor(utils.as(toKey))
     arr.forEach((el, i) => {
       const key = fn(el, i);
       if (result[key]) {
@@ -47,12 +50,20 @@ export default class arrays {
     return result
   }
 
+  static toMapByKey<T extends Object>(
+    arr: Array<T>,
+    key: keyof T
+  ): JsonT<T> {
+    return this.toMap(arr, key as string)
+  }
+
   /**
    * 获取所有数组交集元素
    * @param args
    */
   static intersection<T>(
-    ...args: Array<T[]>): T[] {
+    ...args: Array<T[]>
+  ): T[] {
     if (validators.isNullOrUndefined(args)) {
       return []
     }
@@ -90,7 +101,8 @@ export default class arrays {
   static seek<T>(
     arr: Array<T>,
     observer = (el: T, index?: number) => true as boolean,
-    recursion = (el: T, index?: number) => null as ArrayOrNull<T>): TypeOrNull<{ el: T, index: number }> {
+    recursion = (el: T, index?: number) => null as ArrayOrNull<T>
+  ): TypeOrNull<{ el: T, index: number }> {
 
     let result: TypeOrNull<{ el: T, index: number }> = null
     arrays.foreach(arr, (el, index) => {
@@ -127,7 +139,8 @@ export default class arrays {
    */
   static foreach<T>(
     arr: Array<T>,
-    func: (e: T, i: number) => (false | any)): T[] {
+    func: (e: T, i: number) => (false | any)
+  ): T[] {
     if (!validators.is(arr, 'Array')) {
       return arr
     }
@@ -151,7 +164,8 @@ export default class arrays {
   static pushUnique<T>(
     arr: Array<T>,
     el: T,
-    predictor?: string | ((el: T, i: number) => boolean)): number {
+    predictor?: string | ((el: T, i: number) => boolean)
+  ): number {
     const foundIndex = arrays.indexA(arr, el, predictor)
     if (-1 !== foundIndex) {
       return foundIndex
@@ -169,7 +183,8 @@ export default class arrays {
   static indexA<T>(
     arr: Array<T>,
     el: T,
-    predictor?: string | ((el: T, i: number) => boolean)): number {
+    predictor?: string | ((el: T, i: number) => boolean)
+  ): number {
     let fn: (el: T, i: number) => boolean
     if (predictor instanceof Function) {
       fn = predictor;
@@ -201,7 +216,8 @@ export default class arrays {
   static findA<T>(
     arr: Array<T>,
     el: T,
-    predictor?: string | ((el: T, i: number) => boolean)): T | null {
+    predictor?: string | ((el: T, i: number) => boolean)
+  ): T | null {
     const i = arrays.indexA(arr, el, predictor)
     return -1 !== i ? arr[i] : null
   }
@@ -216,7 +232,8 @@ export default class arrays {
   static remove<T>(
     arr: Array<T>,
     el: any,
-    predictor?: string | ((el: T, i: number) => boolean)): T | null {
+    predictor?: string | ((el: T, i: number) => boolean)
+  ): T | null {
     const i = arrays.indexA(arr, el, predictor)
     if (-1 === i) {
       return null
@@ -232,7 +249,8 @@ export default class arrays {
    */
   static removeAll<T>(
     arrA: Array<T>,
-    arrB: Array<T>): Array<T> {
+    arrB: Array<T>
+  ): Array<T> {
     return arrA.filter(av => !arrB.includes(av))
   }
 
@@ -244,7 +262,8 @@ export default class arrays {
    */
   static concat<T>(
     dist: Array<T>,
-    src: Array<T>): Array<T> {
+    src: Array<T>
+  ): Array<T> {
     if (!validators.is(dist, 'Array') || !validators.is(src, 'Array')) {
       throw new Error('无效数组参数')
     }
@@ -261,7 +280,8 @@ export default class arrays {
    */
   static contains<T>(
     a: Array<T>,
-    e: T, k?: string | ((el: T, i: number) => boolean)): boolean {
+    e: T, k?: string | ((el: T, i: number) => boolean)
+  ): boolean {
     return -1 !== arrays.indexA(a, e, k)
   }
 
@@ -272,7 +292,8 @@ export default class arrays {
    */
   static filter<T>(
     a: Array<T>,
-    cb: (v: T, k?: number) => boolean | null) {
+    cb: (v: T, k?: number) => boolean | null
+  ) {
     let delKeys: number[] = []
     arrays.foreach(a, (v: T, k: number) => {
       if (false === cb(v, k)) {
@@ -291,7 +312,8 @@ export default class arrays {
    */
   static group<T extends Json>(
     a: Array<T>,
-    k: StringOrIdableConvertor<T>): JsonT<T[]> {
+    k: StringOrIdableConvertor<T>
+  ): JsonT<T[]> {
     const ret: JsonT<T[]> = {}
 
     const fn = utils.toIdableConvertor(k)
@@ -312,7 +334,8 @@ export default class arrays {
    */
   static mapProp<T extends Json, P>(
     a: Array<T>,
-    k: string): Array<P> {
+    k: string
+  ): Array<P> {
     const pa: P[] = []
     arrays.foreach(a, (e: T) => {
       if (validators.notNullOrUndefined(e[k])) {
@@ -330,7 +353,8 @@ export default class arrays {
    */
   static unique<T>(
     arr: Array<T>,
-    cover = true): Array<T> {
+    cover = true
+  ): Array<T> {
     const tmp = logics.or(arr, [])
     if (undefined === tmp) {
       return []
@@ -355,7 +379,8 @@ export default class arrays {
    */
   static uniqueBy<T>(
     arr: Array<T>,
-    func: StringOrIdableConvertor<T>): Array<T> {
+    func: StringOrIdableConvertor<T>
+  ): Array<T> {
     return Object.values(arrays.toMap(arr, func))
   }
 
@@ -367,7 +392,8 @@ export default class arrays {
    */
   static merge<T>(
     dist: Array<T>,
-    ...otherArr: Array<Array<T>>): Array<T> {
+    ...otherArr: Array<Array<T>>
+  ): Array<T> {
     if (!validators.isEmpty(otherArr)) {
       arrays.foreach(otherArr, arr => arrays.concat<T>(dist, arr))
     }
@@ -381,7 +407,8 @@ export default class arrays {
    */
   static fetch<T>(
     arr: Array<T>,
-    proc: IDataProcessor<T, boolean>): { element: T, index: number } {
+    proc: IDataProcessor<T, boolean>
+  ): { element: T, index: number } {
     const data = {
       element: arr[arr.length - 1],
       index: arr.length - 1
@@ -403,7 +430,8 @@ export default class arrays {
    */
   static groupByValue<T>(
     obj: Part<T>,
-    mapper?: IDataProcessor<T, string>): JsonT<string[]> {
+    mapper?: IDataProcessor<T, string>
+  ): JsonT<string[]> {
     const ret: JsonT<string[]> = converters.cast()
 
     const $mapper = mapper || strings.toString
@@ -425,7 +453,8 @@ export default class arrays {
    */
   static genNums(
     start: number,
-    end: number): number[] {
+    end: number
+  ): number[] {
     if (0 >= end - start) {
       return []
     }
@@ -447,7 +476,8 @@ export default class arrays {
     childKey = 'children',
     parentIndex = 'parent',
     parentKey = 'id',
-    onlyRoot = false): T[] {
+    onlyRoot = false
+  ): T[] {
 
     // 按parentKey映射所有节点
     const keyMapper: JsonT<T> = arrays.toMap(arr, parentKey)

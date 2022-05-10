@@ -1,6 +1,6 @@
 import converters from './converters';
 
-export default class docs {
+export default class medias {
 
   /**
    * 视频截图

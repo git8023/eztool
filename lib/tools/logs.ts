@@ -1,14 +1,9 @@
-/**
- * 日志级别
- *
- * 在日志框架中只会 >= 指定级别的日志信息
- */
-import { validators } from './validators'
-import { arrays } from './arrays'
-import { dates } from './dates'
-import { ifacer } from '../type/InterfaceDeclarer'
-import { StringKeysJson } from '../type/types'
+import {dates} from './dates'
 import LogLevel = ifacer.LogLevel
+import {ifacer} from '../../lib_bak/type/InterfaceDeclarer';
+import {StringKeysJson} from '../../lib_bak/type/types';
+import validators from './validators';
+import arrays from './arrays';
 
 // @ts-ignore
 const MAX_NAME_LENGTH = Object.keys(LogLevel)
@@ -38,7 +33,7 @@ export class ConsoleLogger implements ifacer.ILogger {
   /**
    * 获取单例实例
    */
-  static get instance () {
+  static get instance() {
     if (!ConsoleLogger._instance) {
       ConsoleLogger._instance = new ConsoleLogger()
     }
@@ -57,7 +52,7 @@ export class ConsoleLogger implements ifacer.ILogger {
   error = (...args: any[]) => this.log(LogLevel.ERROR, Array.from(args))
   fatal = (...args: any[]) => this.log(LogLevel.FATAL, Array.from(args))
 
-  constructor () {
+  constructor() {
 
     if (LogLevel.DEBUG === this.level) {
       // this.enableTrace = true;
@@ -87,7 +82,7 @@ export class ConsoleLogger implements ifacer.ILogger {
    * @param enableTrace 是否打印堆栈
    * @private
    */
-  private log (lv: LogLevel, args: any[], enableTrace = false) {
+  private log(lv: LogLevel, args: any[], enableTrace = false) {
     if (lv < this.level) {
       return
     }
@@ -123,7 +118,7 @@ export class ConsoleLogger implements ifacer.ILogger {
    * @param param 参数
    * @private
    */
-  private print (param: any[]) {
+  private print(param: any[]) {
     console.log(...param)
 
     const isDebug = (this.level <= LogLevel.DEBUG)
@@ -140,7 +135,7 @@ export class ConsoleLogger implements ifacer.ILogger {
    * @param args 打印参数
    * @private
    */
-  private cache (lv: LogLevel, args: any[]) {
+  private cache(lv: LogLevel, args: any[]) {
     this.cacheStore.push({
       lv,
       args

@@ -33,5 +33,6 @@ module.exports = {
     'space-before-function-paren': 'off',
     'semi': 'off',
     'prefer-const': 'off',
+    'keyword-spacing': 'off'
   }
 }

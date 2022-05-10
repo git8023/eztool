@@ -1,9 +1,9 @@
 // 日期工具
-import { arrays } from './arrays'
-import { utils } from './utils'
-import { validators } from './validators'
+import arrays from './arrays'
+import utils from './utils'
+import validators from './validators'
 
-export namespace dates {
+export default class dates {
 
   /**
    * 解析日期字符串或格式化为另一种日期规则字符串
@@ -12,11 +12,15 @@ export namespace dates {
    * @param {string} [outFmt=undefined] 输出日期字符串格式
    * @return {Date | string} 当指定outFmt时输出日期字符串, 否则返回日期对象
    */
-  export function datePoF (dateStr: string, inFmt: string, outFmt?: string): Date | string | null {
-    const d = dateParse(dateStr, inFmt)
+  static datePoF(
+    dateStr: string,
+    inFmt: string,
+    outFmt?: string
+  ): Date | string | null {
+    const d = this.dateParse(dateStr, inFmt)
     // @ts-ignore
     if (d && validators.is(outFmt, 'String') && outFmt.trim().length) {
-      return dateFmt(d, <string>outFmt)
+      return this.dateFmt(d, <string>outFmt)
     }
     return d
   }
@@ -27,7 +31,10 @@ export namespace dates {
    * @param {string} pattern 解析规则(yMDhmsS)
    * @return {Date | null} 解析成功返回日期对象, 否则返回null
    */
-  export function dateParse (dateStr: string, pattern: string): Date | null {
+  static dateParse(
+    dateStr: string,
+    pattern: string
+  ): Date | null {
     const metaPatterns = {
       /**
        * 元规则决策表, 每项决策中会新增三个属性:
@@ -170,10 +177,13 @@ export namespace dates {
    * @param [format] {string} 格式化规则, 默认: yyyy-MM-dd HH:mm:ss
    * @return {string | undefined} 成功返回日期字符串, 否则返回undefined
    */
-  export function dateFmt (date: Date | number | string, format?: string): string {
-    function formatter (format: string) {
+  static dateFmt(
+    date: Date | number | string,
+    format?: string
+  ): string {
+    function formatter(format: string) {
       // @ts-ignore
-      const $this: Date = <Date> this
+      const $this: Date = <Date>this
       format = (format || 'yyyy-MM-dd HH:mm:ss')
       const time = $this.getTime()
       if (isNaN(time)) {
@@ -222,11 +232,14 @@ export namespace dates {
 
   /**
    * 比较两个日期
-   * @param {Date} d1 第一个日期
-   * @param {Date} d2 第二个日期
+   * @param d1 第一个日期
+   * @param [d2=now]  第二个日期
    * @return {number} 正数:d1>d2, 0:d1=d2, 负数:d1<d2, NaN:d1无效
    */
-  export function dateDiff (d1: Date, d2 = new Date()): number {
+  static dateDiff(
+    d1: Date,
+    d2 = new Date()
+  ): number {
     if (!(validators.is(d1, 'Date') && validators.is(d2, 'Date'))) {
       return NaN
     }
@@ -238,7 +251,9 @@ export namespace dates {
    * @param format 日期格式
    * @return 日期格式字符串
    */
-  export function nowFmt (format?: string): string {
-    return dateFmt(new Date(), format)
+  static nowFmt(
+    format?: string
+  ): string {
+    return this.dateFmt(new Date(), format)
   }
 }

@@ -1,9 +1,3 @@
-import {IDataConsumer} from '../types/funcs';
-import {Optional, OptionalConsumer, RawOrPromise, Runner} from '../types/types';
-import validators from './validators';
-import utils from './utils';
-import logics from './logics';
-
 export default class converters {
 
   /**
