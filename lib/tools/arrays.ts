@@ -1,11 +1,11 @@
 import {ArrayOrNull, Json, JsonT, Part, StringOrIdableConvertor, TypeOrNull} from '../types/types';
 import converters from './converters';
-import {IDataProcessor} from '../types/funcs';
 import validators from './validators';
 import utils from './utils';
 import jsons from './jsons';
 import strings from './strings';
 import logics from './logics';
+import {funcs} from '../types/funcs';
 
 type X = { a: string, b: number }
 
@@ -407,7 +407,7 @@ export default class arrays {
    */
   static fetch<T>(
     arr: Array<T>,
-    proc: IDataProcessor<T, boolean>
+    proc: funcs.IDataProcessor<T, boolean>
   ): { element: T, index: number } {
     const data = {
       element: arr[arr.length - 1],
@@ -430,7 +430,7 @@ export default class arrays {
    */
   static groupByValue<T>(
     obj: Part<T>,
-    mapper?: IDataProcessor<T, string>
+    mapper?: funcs.IDataProcessor<T, string>
   ): JsonT<string[]> {
     const ret: JsonT<string[]> = converters.cast()
 

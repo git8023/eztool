@@ -1,6 +1,6 @@
 {
   "name": "@hyong8023/eztool",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "private": false,
   "description": "typescript easy tools; v0.1开始使用class方式导出工具类",
   "scripts": {

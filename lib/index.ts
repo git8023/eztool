@@ -8,6 +8,7 @@ import storages from './tools/storages';
 import strings from './tools/strings';
 import utils from './tools/utils';
 import validators from './tools/validators';
+import logs from './tools/logs';
 
 const apis = {
   arrays,
@@ -19,7 +20,8 @@ const apis = {
   storages,
   strings,
   utils,
-  validators
+  validators,
+  logs
 }
 
 export default apis;

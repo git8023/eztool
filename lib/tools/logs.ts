@@ -1,9 +1,8 @@
-import {dates} from './dates'
-import LogLevel = ifacer.LogLevel
-import {ifacer} from '../../lib_bak/type/InterfaceDeclarer';
-import {StringKeysJson} from '../../lib_bak/type/types';
 import validators from './validators';
 import arrays from './arrays';
+import dates from './dates';
+import {JsonT} from '../types/types';
+import {ILogger, LogLevel} from '../types/ifacer';
 
 // @ts-ignore
 const MAX_NAME_LENGTH = Object.keys(LogLevel)
@@ -15,7 +14,7 @@ const MAX_NAME_LENGTH = Object.keys(LogLevel)
 /**
  * 日志颜色定义
  */
-const ConsoleFontColor: StringKeysJson<string> = {
+const ConsoleFontColor: JsonT<string> = {
   TRACE: '#585858',
   DEBUG: '#000000',
   INFO: '#00ffab',
@@ -27,8 +26,8 @@ const ConsoleFontColor: StringKeysJson<string> = {
 /**
  * 日志工具类
  */
-export class ConsoleLogger implements ifacer.ILogger {
-  private static _instance: ifacer.ILogger
+export class ConsoleLogger implements ILogger {
+  private static _instance: ILogger
 
   /**
    * 获取单例实例
@@ -146,4 +145,5 @@ export class ConsoleLogger implements ifacer.ILogger {
   }
 }
 
-export const logs: ifacer.ILogger = ConsoleLogger.instance
+const logs: ILogger = ConsoleLogger.instance
+export default logs

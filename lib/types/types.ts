@@ -1,4 +1,4 @@
-import {IDataConsumer, IDataProcessor} from './funcs';
+import {funcs} from './funcs';
 
 export type Part<T> = Partial<T>;
 export type ArrayOrNull<T> = Array<T> | null;
@@ -26,5 +26,5 @@ export type Json = JsonT<any>;
 export type RawOrPromise<T> = T | Promise<T>
 export type Runner<T> = (arg: T) => RawOrPromise<T>;
 export type Optional<T> = null | undefined | T;
-export type OptionalConsumer<T> = Optional<IDataConsumer<T>>;
-export type OptionalDataProgress<T> = Optional<IDataProcessor<T, any>>;
+export type OptionalConsumer<T> = Optional<funcs.IDataConsumer<T>>;
+export type OptionalDataProgress<T> = Optional<funcs.IDataProcessor<T, any>>;

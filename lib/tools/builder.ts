@@ -1,8 +1,7 @@
-// 函数构造器
-
 import {AttachHandler, NumberGenerator, PropertyExtractor, SortHandler} from '../types/types';
-import {IProcessor} from '../types/funcs';
+import {funcs} from '../types/funcs';
 
+// 函数构造器
 export default class builder {
 
   /**
@@ -54,7 +53,7 @@ export default class builder {
    * @param [times=1] 执行次数. 小于1无限制
    * @return 过程处理(无参数, 无返回值)
    */
-  static lazy(action: () => any, wait = 1000, times = 1): IProcessor {
+  static lazy(action: () => any, wait = 1000, times = 1): funcs.IProcessor {
     const infinity = (0 >= times)
     return () => {
       setTimeout(() => {

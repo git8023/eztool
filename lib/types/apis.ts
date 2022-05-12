@@ -1,6 +1,5 @@
-import {funcs} from '../../lib_bak/type/InterfaceDeclarer';
 import {DoneHandler} from './types';
-import {IMergeHandler} from './funcs';
+import {funcs} from './funcs';
 
 export namespace apis {
   /**
@@ -63,7 +62,7 @@ export namespace apis {
      * @param func 迭代处理函数
      * @return 合并接口对象
      */
-    each(func: IMergeHandler): IMerge;
+    each(func: funcs.IMergeHandler): IMerge;
 
     /**
      * 结束

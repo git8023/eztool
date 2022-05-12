@@ -1,16 +1,10 @@
-import {IProcessor} from '../types/funcs';
-import {arrays, builder, validators} from '../../lib_bak';
-import {
-  DoneHandler,
-  EachHandler,
-  IdableConvertor,
-  StringKeysJson,
-  StringOrIdableConvertor,
-  WithKeysHandler
-} from '../../lib_bak/type/types';
 import converters from './converters';
-import {JsonT} from '../types/types';
-import {funcs} from '../../lib_bak/type/InterfaceDeclarer';
+import {DoneHandler, IdableConvertor, Json, JsonT, StringOrIdableConvertor} from '../types/types';
+import builder from './builder';
+import validators from './validators';
+import arrays from './arrays';
+import {EachHandler, WithKeysHandler} from '../types/ifacer';
+import {funcs} from '../types/funcs';
 
 export default class utils {
 
@@ -20,7 +14,7 @@ export default class utils {
    * @param lazyTime 延迟时长(ms)
    */
   static lazy(
-    fn: IProcessor,
+    fn: funcs.IProcessor,
     lazyTime = 0
   ) {
     const lazy = builder.lazy(fn, lazyTime);
@@ -174,7 +168,7 @@ export default class utils {
    * @param [nullable=false] {boolean} true-允许null/undefined覆盖
    * @return {any} 目标对象
    */
-  static cover<T extends StringKeysJson<any>>(
+  static cover<T extends Json>(
     to: any,
     from: any,
     useTo = true,
@@ -197,8 +191,8 @@ export default class utils {
    * @return {WithKeysHandler}
    */
   static withKeys(
-    a: StringKeysJson<any>,
-    b: StringKeysJson<any>
+    a: Json,
+    b: Json
   ): WithKeysHandler {
     const that = this;
     const ret: WithKeysHandler = {
@@ -273,7 +267,24 @@ export default class utils {
    * @param [o={}] 源数据
    * @return 目标类型
    */
-  static as(o: any = {}): any {
+  static as(
+    o: any = {}
+  ): any {
     return o;
+  }
+
+  /**
+   * 异步执行
+   * @param call 执行主体函数
+   */
+  static async<T>(
+    call: funcs.IDataConsumer<{ reject: funcs.IProcessor, resolve: funcs.IDataConsumer<T> }>
+  ) {
+    return new Promise<T>((resolve, reject) => {
+      call({
+        resolve,
+        reject
+      })
+    })
   }
 }
