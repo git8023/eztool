@@ -1,6 +1,7 @@
 import {funcs} from './funcs';
 
 export type Part<T> = Partial<T>;
+export type Pair = { key: string, value: any };
 export type ArrayOrNull<T> = Array<T> | null;
 export type TypeOrNull<T> = T | null;
 export type PrimaryTypeString =
@@ -12,7 +13,9 @@ export type PrimaryTypeString =
   | 'Symbol'
   | 'String'
   | 'Date'
-  | 'Number';
+  | 'Number'
+  | 'Promise'
+  | string;
 export type IdableConvertor<T> = (e: T, k: any) => string;
 export type StringOrIdableConvertor<T> = string | IdableConvertor<T>;
 export type NumberGenerator<T> = (e: T) => number;

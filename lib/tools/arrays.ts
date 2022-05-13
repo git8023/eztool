@@ -7,8 +7,6 @@ import strings from './strings';
 import logics from './logics';
 import {funcs} from '../types/funcs';
 
-type X = { a: string, b: number }
-
 export default class arrays {
 
   /**

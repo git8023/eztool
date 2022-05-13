@@ -1,12 +1,12 @@
 // 常规通用工具
 import arrays from './arrays';
 import validators from './validators';
-import {DoneHandler, Part} from '../types/types';
+import {DoneHandler, Pair, Part} from '../types/types';
 import converters from './converters';
 import {apis} from '../types/apis';
-import IMerge = apis.IMerge;
 import logics from './logics';
 import {funcs} from '../types/funcs';
+import IMerge = apis.IMerge;
 
 export default class jsons {
 
@@ -239,5 +239,38 @@ export default class jsons {
     const val = fp()
     store[key] = val
     return val
+  }
+
+  /**
+   * 对象(一级值)属性映射为Pair数组
+   * @param o 对象
+   * @param [sort] Pair数组排序接口, 默认使用对象属性定义顺序
+   */
+  static mapProps<T>(
+    o: T,
+    sort?: funcs.Comparator<Pair>
+  ): Array<Pair> {
+    const src: any = o
+    const props: Array<Pair> = []
+    if (validators.isNot(src, 'Object')) {
+      return props
+    }
+
+    Object.keys(o).forEach((key) => {
+      const value = src[key]
+      if (validators.is(value, 'Function')) return;
+      // if (validators.is(value, '[Symbol]')) return;
+
+      props.push({
+        key,
+        value
+      })
+    })
+
+    if (sort && validators.is(sort, 'Function')) {
+      return props.sort(sort)
+    }
+
+    return props
   }
 }

@@ -66,4 +66,11 @@ export namespace funcs {
      */
     (av: any, bv: any, key: string): boolean | any;
   }
+
+  /**
+   * 对象比较接口
+   */
+  export interface Comparator<T> {
+    (a: T, b: T): number
+  }
 }
