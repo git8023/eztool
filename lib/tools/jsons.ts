@@ -7,6 +7,7 @@ import {apis} from '../types/apis';
 import logics from './logics';
 import {funcs} from '../types/funcs';
 import IMerge = apis.IMerge;
+import utils from './utils';
 
 export default class jsons {
 
@@ -272,5 +273,75 @@ export default class jsons {
     }
 
     return props
+  }
+
+  /**
+   * 对象紧凑处理
+   * @param data 数据对象(无副作用)
+   * @param [recursion] 是否递归处理
+   * @param [nullable] 是否保留null|undefined
+   * @param [emptyStr] 是否保留空字符串
+   * @param [emptyObj] 是否保留空对象
+   * @param [emptyArray] 是否保留空数组
+   * @return 数据对象克隆对象
+   */
+  static compact(
+    data: any,
+    recursion = false,
+    nullable = false,
+    emptyStr = false,
+    emptyObj = false,
+    emptyArray = false
+  ): any {
+    if (!data) return data;
+
+    const delKey = (o: any, k: string | number) => {
+      if (validators.is(o, 'Object')) {
+        delete o[k]
+      } else if (validators.is(o, 'Array')) {
+        o.splice(+k, 1)
+      }
+    }
+
+    data = jsons.cloneDeep(data)
+    utils.foreach(data, (v, k) => {
+      if (validators.isEmpty(v)) {
+        if (validators.isNullOrUndefined(v) && !nullable) {
+          delKey(data, k)
+          return
+        }
+        if (validators.is(v, 'String') && !emptyStr) {
+          delKey(data, k)
+          return
+        }
+        if (validators.is(v, 'Object') && !emptyObj) {
+          delKey(data, k)
+          return
+        }
+        if (validators.is(v, 'Array') && !emptyArray) {
+          delKey(data, k)
+          return
+        }
+      }
+
+      if (v instanceof Object && recursion) {
+        v = this.compact(v);
+        if (validators.notEmpty(v)) {
+          data[k] = v
+          return
+        }
+
+        if (validators.is(v, 'Object') && !emptyObj) {
+          delKey(data, k)
+          return;
+        }
+        if (validators.is(v, 'Array') && !emptyArray) {
+          delKey(data, k)
+
+        }
+      }
+    })
+
+    return data
   }
 }
