@@ -26,8 +26,9 @@ export type EqualsHandler<T> = (a: T, b: T) => boolean;
 export type DoneHandler = (a?: Part<any>, b?: Part<any>) => void;
 export type JsonT<T> = { [s: string]: T };
 export type Json = JsonT<any>;
-export type RawOrPromise<T> = T | Promise<T>
-export type Runner<T> = (arg: T) => RawOrPromise<T>;
+export type ROP<T> = T | Promise<T>
+export type Runner<T> = (arg: T) => ROP<T>;
 export type Optional<T> = null | undefined | T;
 export type OptionalConsumer<T> = Optional<funcs.IDataConsumer<T>>;
 export type OptionalDataProgress<T> = Optional<funcs.IDataProcessor<T, any>>;
+export type PromiseLike<T> = { resolve: funcs.IDataConsumer<T>, reject: funcs.IProcessor };

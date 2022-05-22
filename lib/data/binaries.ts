@@ -1,25 +1,28 @@
-import {IDataConsumer} from '../types/funcs';
-import {OptionalConsumer, OptionalDataProgress, RawOrPromise, Runner} from '../types/types';
+import {OptionalConsumer, OptionalDataProgress, Runner} from '../types/types';
 import validators from '../tools/validators';
-import logics from '../tools/logics';
 import converters from '../tools/converters';
-import {types} from 'sass';
-import Error = types.Error;
+import {funcs} from '../types/funcs';
 
 export default class binaries {
 
-  static blobToBytes(blob: Blob): Promise<Uint8Array>;
+  static blobToBytes(
+    blob: Blob
+  ): Promise<Uint8Array>;
 
-  static blobToBytes(blob: Blob,
-    syncFn: IDataConsumer<Uint8Array>): void;
+  static blobToBytes(
+    blob: Blob,
+    syncFn: funcs.IDataConsumer<Uint8Array>
+  ): void;
 
   /**
    * 同步或异步处理{@link Blob}转{@link Uint8Array}
    * @param blob 数据
    * @param syncFn 同步处理
    */
-  static blobToBytes(blob: Blob,
-    syncFn?: OptionalConsumer<Uint8Array>): Promise<Uint8Array> | void {
+  static blobToBytes(
+    blob: Blob,
+    syncFn?: OptionalConsumer<Uint8Array>
+  ): Promise<Uint8Array> | void {
     const promise = new Promise<Uint8Array>((resolve) => {
       const fr = new FileReader();
       fr.readAsArrayBuffer(blob);
@@ -43,7 +46,9 @@ export default class binaries {
    * @see Promise.then
    * @see Promise.catch
    */
-  static toBytes(data: Blob | Uint8Array | any): Promise<Uint8Array> {
+  static toBytes(
+    data: Blob | Uint8Array | any
+  ): Promise<Uint8Array> {
     if (validators.isNullOrUndefined(data)) {
       return Promise.reject(new Error('数据无效'))
     }
@@ -58,19 +63,21 @@ export default class binaries {
   }
 
   /**
-   * 获取单个参数执行器函数, 返回值优先级顺序: finalRet > fn() > data
+   * 获取单个参数执行器函数, 返回值优先级顺序: finalRet > fn() > fn.arguments[0]
    * @param fn 逻辑函数
-   * @param fn 逻辑函数
+   * @param useFnRet 逻辑函数
    * @param [finalRet=undefined] 指定返回值
    * @return 执行器函数
    */
   static genRunner<T>(
     fn: OptionalDataProgress<T>,
     useFnRet = true,
-    finalRet: T = converters.nil): Runner<T> {
+    finalRet: T = converters.nil
+  ): Runner<T> {
     return (data: T) => {
       return new Promise((resolve, reject) => {
-        try { // 默认使用指定返回值
+        try {
+          // 默认使用指定返回值
           let retData = finalRet;
 
           // 执行函数

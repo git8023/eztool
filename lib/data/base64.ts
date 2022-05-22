@@ -1,7 +1,7 @@
-import {IDataConsumer} from '../types/funcs';
 import validators from '../tools/validators';
 import {Optional, OptionalConsumer} from '../types/types';
 import converters from '../tools/converters';
+import {funcs} from '../types/funcs';
 
 export default class base64 {
 
@@ -29,7 +29,7 @@ export default class base64 {
    * @param imgSrc 图片地址
    * @param syncFn 同步处理函数
    */
-  static toBase64(imgSrc: string, syncFn: IDataConsumer<string>): void;
+  static toBase64(imgSrc: string, syncFn: funcs.IDataConsumer<string>): void;
 
   /**
    * 图片转base64
