@@ -18,7 +18,7 @@ export default class asyncs {
   static lazy(
     call: funcs.IProcessor,
     lazy = 0
-  ): number {
+  ): TimerId {
     return setTimeout(call, lazy)
   }
 
@@ -34,7 +34,7 @@ export default class asyncs {
     lazy: number,
     immediate: boolean,
     loop: boolean
-  ): number;
+  ): TimerId;
 
   /**
    * 定时器
