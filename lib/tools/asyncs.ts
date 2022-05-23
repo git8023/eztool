@@ -4,6 +4,7 @@ import {PromiseLike, ROP} from '../types/types';
 type StopFn = funcs.IProducer<any>
 type IntervalCallT = false | undefined | any
 type IntervalCallP = ROP<IntervalCallT>
+type TimerId = any
 
 export default class asyncs {
 
@@ -66,7 +67,7 @@ export default class asyncs {
     immediate = false,
     loop = true,
     waitForCall = false
-  ): number | StopFn {
+  ): TimerId | StopFn {
 
     // 不需要等待主体返回
     if (!waitForCall) {
