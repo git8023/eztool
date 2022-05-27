@@ -1,7 +1,7 @@
 // 常规通用工具
 import arrays from './arrays';
 import validators from './validators';
-import {DoneHandler, Pair, Part} from '../types/types';
+import {DoneHandler, JsonT, Pair, PairT, Part} from '../types/types';
 import converters from './converters';
 import {apis} from '../types/apis';
 import logics from './logics';
@@ -325,7 +325,7 @@ export default class jsons {
       }
 
       if (v instanceof Object && recursion) {
-        v = this.compact(v);
+        v = jsons.compact(v);
         if (validators.notEmpty(v)) {
           data[k] = v
           return
@@ -343,5 +343,26 @@ export default class jsons {
     })
 
     return data
+  }
+
+  /**
+   * json对象一级属性摊平为数组
+   * @param o jsong对象
+   * @param call 转换函数
+   * @return 结果列表
+   */
+  static flat<T, R>(
+    o: JsonT<T>,
+    call: funcs.IDataProcessor<PairT<T>, R>
+  ): R[] {
+    const rs: R[] = converters.anyA
+    jsons.foreach(o, (value, key) => {
+      const el: R = call({
+        key,
+        value
+      })
+      rs.push(el)
+    })
+    return rs
   }
 }

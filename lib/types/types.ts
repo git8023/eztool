@@ -2,6 +2,7 @@ import {funcs} from './funcs';
 
 export type Part<T> = Partial<T>;
 export type Pair = { key: string, value: any };
+export type PairT<T> = { key: string, value: T };
 export type ArrayOrNull<T> = Array<T> | null;
 export type TypeOrNull<T> = T | null;
 export type PrimaryTypeString =

@@ -51,7 +51,7 @@ export namespace funcs {
      * @param key (数组)下标或(对象)属性名
      * @return {false|any} 停止迭代返回false, 其他值继续下一个迭代
      */
-    (val: T, key: string | number): false | any
+    (val: T, key: any): false | any
   }
 
   /**
