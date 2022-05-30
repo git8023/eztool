@@ -123,3 +123,27 @@ test('arrays.removeAll', () => {
     bar: 'bar'
   }])
 })
+
+type TType = { x: any, children?: TType[] }
+test('arrays.flatTree', () => {
+  const tree: TType = {
+    x: 2,
+    children: [
+      {
+        x: 21,
+        children: [
+          {x: 211}
+        ]
+      },
+      {
+        x: 22,
+        children: [
+          {x: 221}
+        ]
+      }
+    ]
+  }
+  const arr = arrays.flatTree(tree, 'children', true, true);
+  console.log('result: ', arr)
+  expect(arr.length).toBe(5)
+})

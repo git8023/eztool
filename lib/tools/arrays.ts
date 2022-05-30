@@ -472,7 +472,7 @@ export default class arrays {
   static tree<T>(
     arr: T[],
     childKey = 'children',
-    parentIndex = 'parent',
+    parentIndex = 'parentId',
     parentKey = 'id',
     onlyRoot = false
   ): T[] {
@@ -502,5 +502,33 @@ export default class arrays {
     }
 
     return Object.values(keyMapper)
+  }
+
+  /**
+   * 树结构转列表
+   * @param root 根节点
+   * @param childKey 子节点列表属性
+   * @param [hasRoot=true] 是否包含根节点
+   * @param [delChildren=false] 是否删除子节点
+   */
+  static flatTree<T>(
+    root: T,
+    childKey = 'children' as keyof T,
+    hasRoot = true,
+    delChildren = false
+  ): T[] {
+    const arr: T[] = hasRoot ? [root] : []
+    if (validators.isNot(root, 'Object')) return arr
+
+    arrays.foreach<T>(converters.cast(root[childKey]), (e) => {
+      arr.push(e)
+
+      const children = arrays.flatTree(e, childKey, false, delChildren);
+      if (validators.notEmpty(children)) arr.push(...children)
+    })
+
+    if (delChildren) delete root[childKey]
+
+    return arr
   }
 }
