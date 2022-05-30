@@ -1,15 +1,21 @@
 import {AttachHandler, NumberGenerator, PropertyExtractor, SortHandler} from '../types/types';
 import {funcs} from '../types/funcs';
+import converters from './converters';
+import validators from './validators';
 
 // 函数构造器
 export default class builder {
 
   /**
-   * 构建数组排序接口
-   * @param [toNum] 对象到数值转换器
-   * @return 排序转换器
+   * 构建复杂对象排序比较器
+   * @param kog Key or NumberGenerator
+   * @return 比较函数
    */
-  static sort<T>(toNum: NumberGenerator<T>): SortHandler<T> {
+  static sort<T>(
+    kog: (keyof T) | NumberGenerator<T>
+  ): SortHandler<T> {
+    let toNum: NumberGenerator<T> = converters.cast(kog);
+    if (validators.is(kog, 'String')) toNum = (e: any) => e[kog]
     return (a: T, b: T) => toNum(a) - toNum(b)
   }
 
@@ -18,7 +24,9 @@ export default class builder {
    * @param [prop='id']属性名称
    * @return 属性提取函数
    */
-  static extra<T, R>(prop = 'id'): PropertyExtractor<T, R> {
+  static extra<T, R>(
+    prop = 'id'
+  ): PropertyExtractor<T, R> {
     // @ts-ignore
     return (e: StringKeysJson<any>) => (e[prop] as R)
   }
@@ -28,7 +36,9 @@ export default class builder {
    * @param [prop='id'] 属性名称
    * @return 属性提取函数
    */
-  static extraString<T>(prop = 'id'): PropertyExtractor<T, string> {
+  static extraString<T>(
+    prop = 'id'
+  ): PropertyExtractor<T, string> {
     return builder.extra<T, string>(prop)
   }
 
@@ -38,7 +48,10 @@ export default class builder {
    * @param prop {string} 索引
    * @return 属性附加接口
    */
-  static attach<T, V>(v: V, prop: string): AttachHandler<T, V> {
+  static attach<T, V>(
+    v: V,
+    prop: string
+  ): AttachHandler<T, V> {
     return (e: T) => {
       // @ts-ignore
       e[prop] = v
@@ -53,7 +66,11 @@ export default class builder {
    * @param [times=1] 执行次数. 小于1无限制
    * @return 过程处理(无参数, 无返回值)
    */
-  static lazy(action: () => any, wait = 1000, times = 1): funcs.IProcessor {
+  static lazy(
+    action: funcs.IProcessor,
+    wait = 1000,
+    times = 1
+  ): funcs.IProcessor {
     const infinity = (0 >= times)
     return () => {
       setTimeout(() => {
