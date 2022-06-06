@@ -1,6 +1,6 @@
 {
   "name": "@hyong8023/eztool",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "private": false,
   "description": "typescript easy tools; v0.1开始使用class方式导出工具类",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "lint:fix": "eslint --fix --ext .ts .",
-    "pub": "npm publish --access public",
+    "pub": "npm publish --access public --registry https://registry.npmjs.org",
     "test": "jest"
   },
   "main": "./lib/index.ts",

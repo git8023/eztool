@@ -228,16 +228,19 @@ export default class jsons {
    * @param key 属性名
    * @param fp 属性值计算过程
    */
-  static computeIfAbsent<T>(
-    store: any,
-    key: string | number,
-    fp: funcs.IProducer<T> = (() => ({} as T))
-  ): T {
+  static computeIfAbsent<T, R>(
+    store: T,
+    key: (keyof T) | string,
+    fp: (store: T, key: string | keyof T) => R
+  ): R {
+    // @ts-ignore
     if (key in store) {
-      return <T>store[key]
+      // @ts-ignore
+      return <R>store[key]
     }
 
-    const val = fp()
+    const val = fp(store, key)
+    // @ts-ignore
     store[key] = val
     return val
   }

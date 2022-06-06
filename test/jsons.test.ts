@@ -1,4 +1,5 @@
 import ezt from '../lib'
+import logs from '../lib/tools/logs';
 
 const jsons = ezt.jsons
 test('jsons.compact: Recursion', () => {
@@ -27,4 +28,20 @@ test('jsons.compact: Recursion', () => {
     a: 1,
     b: [{a: 1}, {}]
   }).toStrictEqual(simpleRet)
+})
+
+test('jsons.computeIfAbsent', () => {
+  const x = {
+    foo: 1
+  }
+
+  jsons.computeIfAbsent(x, 'foo', (store, key) => 'foo')
+  jsons.computeIfAbsent(x, 'bar', (store, key) => 'bar')
+
+  logs.info(x)
+
+  expect(x.foo).toBe(1)
+  // @ts-ignore
+  expect(x.bar).toBe('bar')
+
 })
