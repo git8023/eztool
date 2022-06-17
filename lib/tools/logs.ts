@@ -15,10 +15,10 @@ const MAX_NAME_LENGTH = Object.keys(LogLevel)
  * 日志颜色定义
  */
 const ConsoleFontColor: JsonT<string> = {
-  TRACE: '#585858',
-  DEBUG: '#000000',
-  INFO: '#00ffab',
-  WARN: '#ffa200',
+  TRACE: '#999',
+  DEBUG: '#333',
+  INFO: '#40c740',
+  WARN: '#8f8f00',
   ERROR: '#ac001c',
   FATAL: '#ff0000'
 }
@@ -88,7 +88,8 @@ export class ConsoleLogger implements ILogger {
     this.enableTrace = enableTrace
 
     let lvName = LogLevel[lv]
-    const color = 'color:' + ConsoleFontColor[lvName]
+    const lvColor = ConsoleFontColor[lvName];
+    const color = 'color:' + lvColor
 
     let spCount = 0
     arrays.foreach(args, e => {
@@ -103,8 +104,8 @@ export class ConsoleLogger implements ILogger {
     const date = dates.nowFmt('yyyy-MM-dd HH:mm:ss:S')
     const param = [
       `%c[${lvName}]%c -- [${date}]:` + ' %s'.repeat(spCount),
-      color + '; padding:5px; background:rgba(0,0,0,.3); border-radius:5px;',
-      color + '; border:0;background:transparent;',
+      `padding:5px; background:${lvColor}; color:#fff; font-size:12px;`,
+      `color:${lvColor}; border:0;background:transparent; font-size:14px;`,
       ...args
     ]
     this.cache(lv, param)

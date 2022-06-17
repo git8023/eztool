@@ -16,7 +16,7 @@ import base64 from './data/base64';
 import * as types from './types/types'
 import binaries from './data/binaries';
 
-const apis = {
+const ezt = {
   arrays,
   asyncs,
   ArrayStream,
@@ -46,4 +46,4 @@ const apis = {
   validators
 }
 
-export default apis;
+export default ezt;
