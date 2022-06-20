@@ -15,6 +15,7 @@ import ArrayStream from './data/ArrayStream';
 import base64 from './data/base64';
 import * as types from './types/types'
 import binaries from './data/binaries';
+import clipboards from './tools/clipboards';
 
 const ezt = {
   arrays,
@@ -26,6 +27,7 @@ const ezt = {
   builder,
 
   converters,
+  clipboards,
 
   dates,
 

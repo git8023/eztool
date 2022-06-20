@@ -278,7 +278,7 @@ export default class utils {
    * @param call 执行主体函数
    */
   static async<T>(
-    call: funcs.IDataConsumer<{ reject: funcs.IProcessor, resolve: funcs.IDataConsumer<T> }>
+    call: funcs.IDataConsumer<{ reject: funcs.IDataConsumer<Error | any | void | undefined>, resolve: funcs.IDataConsumer<T> }>
   ) {
     return new Promise<T>((resolve, reject) => {
       call({
