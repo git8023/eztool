@@ -11,11 +11,17 @@
 <script lang="ts">
 import {Vue} from 'vue-class-component'
 import clipboards from '../lib/tools/clipboards';
+import logs from '../lib/tools/logs';
 
 export default class App extends Vue {
 
   onCopyToClipboard() {
     clipboards.text.set('copy test');
+  }
+
+  mounted() {
+    logs.fatal('From App.vue')
+    console.error(1)
   }
 
 }

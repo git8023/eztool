@@ -8,6 +8,7 @@ import logics from './logics';
 import {funcs} from '../types/funcs';
 import IMerge = apis.IMerge;
 import utils from './utils';
+import propChains from './propChains';
 
 export default class jsons {
 
@@ -233,6 +234,19 @@ export default class jsons {
     key: (keyof T) | string,
     fp: (store: T, key: string | keyof T) => R
   ): R {
+
+    // 数组
+    if (validators.is(store, 'Array')) {
+      let arr = converters.cast<any[]>(store)
+      let arrIndex = converters.cast<number>(key)
+      let el = arr[arrIndex];
+      if (validators.isNullOrUndefined(el)) {
+        el = fp(store, key);
+        arr.splice(arrIndex, 0, el)
+      }
+      return el;
+    }
+
     // @ts-ignore
     if (key in store) {
       // @ts-ignore
@@ -367,5 +381,18 @@ export default class jsons {
       rs.push(el)
     })
     return rs
+  }
+
+  /**
+   * 获取对象属性值
+   * @param o json对象
+   * @param propChain 属性链; e.g: foo.bar, foo[0].bar, ...
+   * @return 属性值
+   */
+  static get<R>(
+    o: any,
+    propChain: string
+  ): R {
+    return propChains.getValue(o, propChain)
   }
 }

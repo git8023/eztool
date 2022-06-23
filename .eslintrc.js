@@ -33,6 +33,8 @@ module.exports = {
     'space-before-function-paren': 'off',
     'semi': 'off',
     'prefer-const': 'off',
-    'keyword-spacing': 'off'
+    'keyword-spacing': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'brace-style': 'off'
   }
 }

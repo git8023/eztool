@@ -119,7 +119,12 @@ export class ConsoleLogger implements ILogger {
    * @private
    */
   private print(param: any[]) {
-    console.log(...param)
+    // 实现简单定位
+    let sp = new Error().stack!.split('\n');
+    let callerTxt = sp[4] || '';
+    let ema = callerTxt.match(/\((.*)\)/) || [];
+    let atSrc = ema[1] || '';
+    console.log(...param, atSrc)
 
     const isDebug = (this.level <= LogLevel.DEBUG)
     if (isDebug && this.enableTrace) {
